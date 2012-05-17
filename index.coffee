@@ -14,7 +14,10 @@ defaultCallback = (err) ->
 class SessionStore extends require('connect').session.Store
     constructor: (options) ->
         options?.interval ?= 60000
-        mongoose.connect options.url
+        if options.url.indexOf(',') > -1
+          mongoose.connectSet options.url
+        else  
+          mongoose.connect options.url
         setInterval (-> Session.remove { expires: { '$lte': new Date() }}, defaultCallback), options.interval
         
     get: (sid, cb = defaultCallback) ->
